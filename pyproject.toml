@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tac-personalization"
+version = "0.1.0"
+description = "Personalized music emotion prediction"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scipy>=1.11",
+    "scikit-learn>=1.3",
+    "xgboost>=2.0",
+    "torch>=2.0",
+    "tqdm>=4.65",
+    "pyarrow>=14.0",
+]
+
+[project.optional-dependencies]
+plot = ["matplotlib>=3.8", "seaborn>=0.13"]
+data = ["duckdb>=0.9"]
+dev = ["pytest>=7.0", "ruff>=0.1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
