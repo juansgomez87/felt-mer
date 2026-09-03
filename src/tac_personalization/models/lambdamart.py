@@ -7,7 +7,6 @@ from scipy.special import expit
 from sklearn.preprocessing import StandardScaler
 
 from tac_personalization.config import (
-    CV_SEED,
     LAMBDAMART_NUM_BOOST_ROUND,
     LAMBDAMART_PARAMS,
 )

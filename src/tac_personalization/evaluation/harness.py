@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 
+from tac_personalization.baselines.acoustic import AcousticBaseline
+from tac_personalization.baselines.general_bt import GeneralBTBaseline
 from tac_personalization.config import (
     AUDIO_FEATURES_PATH,
     CV_SEED,
@@ -11,8 +13,6 @@ from tac_personalization.config import (
     MIN_PAIRS_CV,
     N_FOLDS,
 )
-from tac_personalization.baselines.acoustic import AcousticBaseline
-from tac_personalization.baselines.general_bt import GeneralBTBaseline
 from tac_personalization.data.features import get_feature_matrix
 from tac_personalization.data.loading import (
     get_dimension_comparisons,

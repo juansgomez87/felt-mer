@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Run all models and produce combined results CSV."""
 
-from pathlib import Path
 
 import pandas as pd
 import torch
@@ -12,7 +11,6 @@ from tac_personalization.evaluation.harness import run_experiment
 from tac_personalization.evaluation.results import print_summary
 from tac_personalization.models.bt import BradleyTerryModel
 from tac_personalization.models.dpo import DPOModel
-from tac_personalization.models.ensemble import EnsembleModel
 from tac_personalization.models.lambdamart import LambdaMARTModel
 
 

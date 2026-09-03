@@ -1,7 +1,6 @@
 """Tests for evaluation metrics."""
 
 import numpy as np
-import pytest
 
 from tac_personalization.evaluation.metrics import compute_binary_metrics
 

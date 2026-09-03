@@ -111,7 +111,7 @@ def print_summary(res_df: pd.DataFrame, baseline_label: str = "Baseline") -> Non
     if "acc_general_bt_mean" in res_df.columns:
         gbl = res_df["acc_general_bt_mean"].dropna()
         if len(gbl) > 0:
-            print(f"\n--- vs General (pooled) BT ---")
+            print("\n--- vs General (pooled) BT ---")
             print(f"  Personalized acc: {res_df['acc_personalized_mean'].mean():.4f}")
             print(f"  General BT acc:   {gbl.mean():.4f}")
             imp_vs_gbl = res_df["acc_improvement_vs_general"].dropna()

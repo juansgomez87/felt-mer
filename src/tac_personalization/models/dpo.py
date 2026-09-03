@@ -5,9 +5,9 @@ import copy
 import numpy as np
 import pandas as pd
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.preprocessing import StandardScaler
+from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from tac_personalization.config import (
