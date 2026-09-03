@@ -3,10 +3,10 @@
 import numpy as np
 import pandas as pd
 
-from tac_personalization.models.base import PairwisePreferenceModel
-from tac_personalization.models.bt import BradleyTerryModel
-from tac_personalization.models.dpo import DPOModel
-from tac_personalization.models.lambdamart import LambdaMARTModel
+from felt_mer.models.base import PairwisePreferenceModel
+from felt_mer.models.bt import BradleyTerryModel
+from felt_mer.models.dpo import DPOModel
+from felt_mer.models.lambdamart import LambdaMARTModel
 
 
 def _fuse_probs(probs: list[float | None]) -> float | None:

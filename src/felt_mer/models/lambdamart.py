@@ -6,12 +6,12 @@ import xgboost as xgb
 from scipy.special import expit
 from sklearn.preprocessing import StandardScaler
 
-from tac_personalization.config import (
+from felt_mer.config import (
     LAMBDAMART_NUM_BOOST_ROUND,
     LAMBDAMART_PARAMS,
 )
-from tac_personalization.data.features import get_feature_matrix
-from tac_personalization.models.base import PairwisePreferenceModel
+from felt_mer.data.features import get_feature_matrix
+from felt_mer.models.base import PairwisePreferenceModel
 
 
 def _prepare_ranking_data(

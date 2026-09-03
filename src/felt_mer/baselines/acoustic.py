@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from scipy.special import expit
 
-from tac_personalization.evaluation.metrics import compute_binary_metrics
+from felt_mer.evaluation.metrics import compute_binary_metrics
 
 
 class AcousticBaseline:

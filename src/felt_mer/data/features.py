@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from tac_personalization.config import AUDIO_FEATURE_COLS
+from felt_mer.config import AUDIO_FEATURE_COLS
 
 
 def get_feature_matrix(

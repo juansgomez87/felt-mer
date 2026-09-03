@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from tac_personalization.evaluation.metrics import compute_binary_metrics
+from felt_mer.evaluation.metrics import compute_binary_metrics
 
 
 class TestComputeBinaryMetrics:

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from tac_personalization.analysis.plotting import (
+from felt_mer.analysis.plotting import (
     _load_surveys,
     plot_agreement_with_spotify,
     plot_feature_importance,
@@ -15,11 +15,11 @@ from tac_personalization.analysis.plotting import (
     plot_survey_correlates,
     plot_user_patterns,
 )
-from tac_personalization.analysis.segmentation import (
+from felt_mer.analysis.segmentation import (
     dimension_specific_patterns,
     segment_users_by_personalization,
 )
-from tac_personalization.config import RESULTS_DIR, USER_DATA_DIR
+from felt_mer.config import RESULTS_DIR, USER_DATA_DIR
 
 
 def main():

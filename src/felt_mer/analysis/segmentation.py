@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from tac_personalization.config import PATTERN_IMPROVEMENT_THRESHOLD
+from felt_mer.config import PATTERN_IMPROVEMENT_THRESHOLD
 
 PATTERN_ORDER = ("both", "arousal_only", "valence_only", "neither")
 

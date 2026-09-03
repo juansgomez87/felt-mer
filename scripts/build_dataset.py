@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from tac_personalization.config import (
+from felt_mer.config import (
     ALL_AUDIO_COLS,
     AUDIO_FEATURES_PATH,
     COMPARISONS_CSV,

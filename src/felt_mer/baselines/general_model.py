@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 from scipy.special import expit
 
-from tac_personalization.config import DIMENSION_TEST_FILE, USER_DATA_DIR
-from tac_personalization.data.loading import get_user_dir
-from tac_personalization.evaluation.metrics import compute_binary_metrics
+from felt_mer.config import DIMENSION_TEST_FILE, USER_DATA_DIR
+from felt_mer.data.loading import get_user_dir
+from felt_mer.evaluation.metrics import compute_binary_metrics
 
 
 class GeneralModelBaseline:

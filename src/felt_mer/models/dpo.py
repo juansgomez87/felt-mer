@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from tac_personalization.config import (
+from felt_mer.config import (
     AUDIO_FEATURE_COLS,
     DPO_BATCH_SIZE,
     DPO_BETA,
@@ -19,8 +19,8 @@ from tac_personalization.config import (
     DPO_HIDDEN_DIMS,
     DPO_LR,
 )
-from tac_personalization.data.features import get_feature_matrix
-from tac_personalization.models.base import PairwisePreferenceModel
+from felt_mer.data.features import get_feature_matrix
+from felt_mer.models.base import PairwisePreferenceModel
 
 
 # ---------------------------------------------------------------------------

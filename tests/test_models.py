@@ -4,12 +4,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from tac_personalization.baselines.acoustic import AcousticBaseline
-from tac_personalization.data.loading import get_dimension_comparisons
-from tac_personalization.models.bt import BradleyTerryModel
-from tac_personalization.models.dpo import DPOModel
-from tac_personalization.models.ensemble import EnsembleModel
-from tac_personalization.models.lambdamart import LambdaMARTModel
+from felt_mer.baselines.acoustic import AcousticBaseline
+from felt_mer.data.loading import get_dimension_comparisons
+from felt_mer.models.bt import BradleyTerryModel
+from felt_mer.models.dpo import DPOModel
+from felt_mer.models.ensemble import EnsembleModel
+from felt_mer.models.lambdamart import LambdaMARTModel
 
 
 class TestBradleyTerryModel:

@@ -6,9 +6,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from tac_personalization.analysis.segmentation import PATTERN_ORDER
-from tac_personalization.config import FIGURE_RCPARAMS, USER_DATA_DIR
-from tac_personalization.data.loading import get_user_dir
+from felt_mer.analysis.segmentation import PATTERN_ORDER
+from felt_mer.config import FIGURE_RCPARAMS, USER_DATA_DIR
+from felt_mer.data.loading import get_user_dir
 
 try:
     import matplotlib

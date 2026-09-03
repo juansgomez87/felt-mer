@@ -83,7 +83,7 @@ uv run pytest
 ## Project structure
 
 ```
-src/tac_personalization/
+src/felt_mer/
 ├── config.py              # paths, feature cols, hyperparams
 ├── data/                  # loading + feature engineering
 ├── models/                # bt, lambdamart, dpo, ensemble (shared ABC)

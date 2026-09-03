@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from tac_personalization.config import (
+from felt_mer.config import (
     COMPARISONS_PARQUET,
     COMPARISONS_CSV,
     MAPPING_FILE,

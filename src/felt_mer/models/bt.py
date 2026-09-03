@@ -5,9 +5,9 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn.preprocessing import StandardScaler
 
-from tac_personalization.config import BT_MAX_ITER, CV_SEED
-from tac_personalization.data.features import create_pairwise_features
-from tac_personalization.models.base import PairwisePreferenceModel
+from felt_mer.config import BT_MAX_ITER, CV_SEED
+from felt_mer.data.features import create_pairwise_features
+from felt_mer.models.base import PairwisePreferenceModel
 
 
 class BradleyTerryModel(PairwisePreferenceModel):

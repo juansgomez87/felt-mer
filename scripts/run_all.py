@@ -5,13 +5,13 @@
 import pandas as pd
 import torch
 
-from tac_personalization.baselines.acoustic import AcousticBaseline
-from tac_personalization.config import AUDIO_FEATURES_PATH, RESULTS_DIR
-from tac_personalization.evaluation.harness import run_experiment
-from tac_personalization.evaluation.results import print_summary
-from tac_personalization.models.bt import BradleyTerryModel
-from tac_personalization.models.dpo import DPOModel
-from tac_personalization.models.lambdamart import LambdaMARTModel
+from felt_mer.baselines.acoustic import AcousticBaseline
+from felt_mer.config import AUDIO_FEATURES_PATH, RESULTS_DIR
+from felt_mer.evaluation.harness import run_experiment
+from felt_mer.evaluation.results import print_summary
+from felt_mer.models.bt import BradleyTerryModel
+from felt_mer.models.dpo import DPOModel
+from felt_mer.models.lambdamart import LambdaMARTModel
 
 
 def _get_device():

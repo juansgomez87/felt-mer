@@ -4,26 +4,26 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
 
-from tac_personalization.baselines.acoustic import AcousticBaseline
-from tac_personalization.baselines.general_bt import GeneralBTBaseline
-from tac_personalization.config import (
+from felt_mer.baselines.acoustic import AcousticBaseline
+from felt_mer.baselines.general_bt import GeneralBTBaseline
+from felt_mer.config import (
     AUDIO_FEATURES_PATH,
     CV_SEED,
     DIMENSIONS,
     MIN_PAIRS_CV,
     N_FOLDS,
 )
-from tac_personalization.data.features import get_feature_matrix
-from tac_personalization.data.loading import (
+from felt_mer.data.features import get_feature_matrix
+from felt_mer.data.loading import (
     get_dimension_comparisons,
     get_real_user_ids,
     load_audio_features,
     load_comparisons,
     load_mapping,
 )
-from tac_personalization.evaluation.metrics import compute_binary_metrics
-from tac_personalization.evaluation.results import build_results_row
-from tac_personalization.models.base import PairwisePreferenceModel
+from felt_mer.evaluation.metrics import compute_binary_metrics
+from felt_mer.evaluation.results import build_results_row
+from felt_mer.models.base import PairwisePreferenceModel
 
 
 def _nanmean(x: list[float]) -> float:
