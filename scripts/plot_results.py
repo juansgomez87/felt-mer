@@ -45,11 +45,12 @@ def main():
 
     print(f"Loaded {len(res_df)} rows, {len(user_ids)} users")
 
-    plot_agreement_with_spotify(res_df, segment_df, args.output_dir / "agreement_with_spotify.png")
-    plot_improvement_heatmap(res_df, args.output_dir / "improvement_heatmap.png")
-    plot_user_patterns(res_df, pattern_df, args.output_dir / "user_patterns.png")
-    plot_survey_correlates(pattern_df, surveys, args.output_dir / "survey_correlates.png")
-    plot_statistical_summary(res_df, pattern_df, args.output_dir / "statistical_summary.png")
+    plot_agreement_with_spotify(res_df, segment_df, args.output_dir / "agreement_with_spotify.pdf")
+    plot_improvement_heatmap(res_df, args.output_dir / "improvement_heatmap.pdf")
+    # Manuscript Fig. 3 — PDF so the paper build embeds vector text.
+    plot_user_patterns(res_df, pattern_df, args.output_dir / "user_patterns.pdf")
+    plot_survey_correlates(pattern_df, surveys, args.output_dir / "survey_correlates.pdf")
+    plot_statistical_summary(res_df, pattern_df, args.output_dir / "statistical_summary.pdf")
 
     if args.feature_importance and args.feature_importance.exists():
         plot_feature_importance(args.feature_importance, args.output_dir / "feature_importance.png")

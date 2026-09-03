@@ -13,6 +13,7 @@ data/raw/
 *.png
 .venv/
 .env
+data/
+results/
 
 *.DS_Store
-.claude/

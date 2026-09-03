@@ -58,6 +58,28 @@ N_FOLDS = 5
 CV_SEED = 42
 
 # ---------------------------------------------------------------------------
+# Analysis
+# ---------------------------------------------------------------------------
+# Accuracy gain (in absolute points) above which a dimension counts as helped
+# by personalization. Used to classify per-user patterns for Fig. 3.
+PATTERN_IMPROVEMENT_THRESHOLD = 0.05
+
+# Matplotlib settings for manuscript figures (fonttype 42 embeds TrueType so
+# the PDF text stays selectable and editable).
+FIGURE_RCPARAMS = {
+    "font.size": 11,
+    "axes.labelsize": 11,
+    "axes.titlesize": 12,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "legend.fontsize": 9,
+    "savefig.dpi": 300,
+    "savefig.bbox": "tight",
+    "savefig.facecolor": "white",
+    "pdf.fonttype": 42,
+}
+
+# ---------------------------------------------------------------------------
 # Minimum data thresholds
 # ---------------------------------------------------------------------------
 MIN_PAIRS_CV = N_FOLDS * 2

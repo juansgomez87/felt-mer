@@ -1,6 +1,11 @@
 """User segmentation and dimension-specific personalization patterns."""
 
+import numpy as np
 import pandas as pd
+
+from tac_personalization.config import PATTERN_IMPROVEMENT_THRESHOLD
+
+PATTERN_ORDER = ("both", "arousal_only", "valence_only", "neither")
 
 
 def segment_users_by_personalization(res_df: pd.DataFrame) -> pd.DataFrame:
@@ -33,10 +38,41 @@ def segment_users_by_personalization(res_df: pd.DataFrame) -> pd.DataFrame:
     return user_summary
 
 
-def dimension_specific_patterns(res_df: pd.DataFrame) -> pd.DataFrame:
+def classify_pattern(
+    arousal_improvement: float | None,
+    valence_improvement: float | None,
+    threshold: float = PATTERN_IMPROVEMENT_THRESHOLD,
+) -> str:
+    """Classify one user as both / arousal_only / valence_only / neither.
+
+    A dimension counts as helped when its accuracy gain exceeds `threshold`.
+    A missing improvement (the user has no CV result for that dimension) is
+    treated as absent rather than as zero, so a user evaluated on only one
+    dimension is classified on that dimension alone.
+    """
+    helped_arousal = arousal_improvement is not None and arousal_improvement > threshold
+    helped_valence = valence_improvement is not None and valence_improvement > threshold
+
+    if arousal_improvement is None:
+        return "valence_only" if helped_valence else "neither"
+    if valence_improvement is None:
+        return "arousal_only" if helped_arousal else "neither"
+    if helped_arousal and helped_valence:
+        return "both"
+    if helped_arousal:
+        return "arousal_only"
+    if helped_valence:
+        return "valence_only"
+    return "neither"
+
+
+def dimension_specific_patterns(
+    res_df: pd.DataFrame,
+    threshold: float = PATTERN_IMPROVEMENT_THRESHOLD,
+) -> pd.DataFrame:
     """Classify each user by dimension-specific personalization pattern.
 
-    Patterns: both, arousal_only, valence_only, neither, mixed.
+    Patterns: both, arousal_only, valence_only, neither.
     Returns DataFrame with user_id, arousal_improvement, valence_improvement, pattern.
     """
     pivot = res_df.pivot_table(
@@ -45,26 +81,22 @@ def dimension_specific_patterns(res_df: pd.DataFrame) -> pd.DataFrame:
         values="acc_improvement",
         aggfunc="first",
     )
-    patterns = []
-    for uid, row in pivot.iterrows():
-        arousal_imp = row.get("arousal", 0)
-        valence_imp = row.get("valence", 0)
+    pivot.columns.name = None
+    pivot = pivot.rename(columns={
+        "arousal": "arousal_improvement",
+        "valence": "valence_improvement",
+    })
+    for col in ("arousal_improvement", "valence_improvement"):
+        if col not in pivot.columns:
+            pivot[col] = np.nan
+    pivot = pivot.reset_index()
 
-        if arousal_imp > 0.1 and valence_imp < -0.05:
-            pattern = "arousal_only"
-        elif valence_imp > 0.1 and arousal_imp < -0.05:
-            pattern = "valence_only"
-        elif arousal_imp > 0.05 and valence_imp > 0.05:
-            pattern = "both"
-        elif arousal_imp < -0.05 and valence_imp < -0.05:
-            pattern = "neither"
-        else:
-            pattern = "mixed"
-
-        patterns.append({
-            "user_id": uid,
-            "arousal_improvement": arousal_imp,
-            "valence_improvement": valence_imp,
-            "pattern": pattern,
-        })
-    return pd.DataFrame(patterns)
+    pivot["pattern"] = [
+        classify_pattern(
+            row["arousal_improvement"] if pd.notna(row["arousal_improvement"]) else None,
+            row["valence_improvement"] if pd.notna(row["valence_improvement"]) else None,
+            threshold=threshold,
+        )
+        for _, row in pivot.iterrows()
+    ]
+    return pivot[["user_id", "arousal_improvement", "valence_improvement", "pattern"]]

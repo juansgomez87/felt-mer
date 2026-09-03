@@ -6,11 +6,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from tac_personalization.analysis.segmentation import (
-    dimension_specific_patterns,
-    segment_users_by_personalization,
-)
-from tac_personalization.config import USER_DATA_DIR
+from tac_personalization.analysis.segmentation import PATTERN_ORDER
+from tac_personalization.config import FIGURE_RCPARAMS, USER_DATA_DIR
 from tac_personalization.data.loading import get_user_dir
 
 try:
@@ -142,42 +139,44 @@ def plot_improvement_heatmap(res_df, output_path):
 
 
 def plot_user_patterns(res_df, pattern_df, output_path):
-    """Pattern distribution donut + 2D pattern space."""
+    """Pattern distribution donut + per-user delta space (manuscript Fig. 3)."""
     if not HAS_MPL or pattern_df is None:
         return None
 
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-    pattern_order = ["both", "arousal_only", "valence_only", "mixed", "neither"]
-    pattern_labels = ["Both", "Arousal only", "Valence only", "Mixed", "Neither"]
-    pattern_colors = ["#2ecc71", "#e74c3c", "#3498db", "#f39c12", "#95a5a6"]
-
+    labels = ["Both helped", "Arousal only", "Valence only", "Neither"]
+    colors = ["#2ecc71", "#e74c3c", "#3498db", "#95a5a6"]
     counts = pattern_df["pattern"].value_counts()
-    sizes = [counts.get(p, 0) for p in pattern_order]
-    labels_use = [f"{lbl} ({s})" for lbl, s in zip(pattern_labels, sizes)]
-    axes[0].pie(sizes, labels=labels_use, autopct=lambda pct: f"{pct:.0f}%" if pct else "",
-                colors=pattern_colors, startangle=90, pctdistance=0.75)
-    centre = plt.Circle((0, 0), 0.5, fc="white")
-    axes[0].add_artist(centre)
-    axes[0].set_title("A. Pattern Distribution")
+    sizes = [int(counts.get(p, 0)) for p in PATTERN_ORDER]
 
-    for pat, color in zip(pattern_order, pattern_colors):
-        sub = pattern_df[pattern_df["pattern"] == pat]
-        if len(sub) > 0:
+    with plt.rc_context(FIGURE_RCPARAMS):
+        fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+        axes[0].pie(sizes, labels=[f"{lbl}\n(n={n})" for lbl, n in zip(labels, sizes)],
+                    colors=colors, startangle=90, pctdistance=0.75,
+                    autopct=lambda pct: f"{pct:.0f}%" if pct else "",
+                    textprops={"fontsize": 10})
+        axes[0].add_artist(plt.Circle((0, 0), 0.5, fc="white"))
+        axes[0].set_title("A. Pattern distribution across users")
+
+        for pattern, color in zip(PATTERN_ORDER, colors):
+            sub = pattern_df[pattern_df["pattern"] == pattern]
+            if sub.empty:
+                continue
             axes[1].scatter(sub["arousal_improvement"] * 100, sub["valence_improvement"] * 100,
-                            s=50, alpha=0.8, label=f"{pat.replace('_', ' ')} (n={len(sub)})",
-                            color=color, edgecolors="black", linewidth=0.8)
-    axes[1].axhline(0, color="gray", linestyle="-", linewidth=1)
-    axes[1].axvline(0, color="gray", linestyle="-", linewidth=1)
-    axes[1].set_xlabel("Arousal improvement (% pts)")
-    axes[1].set_ylabel("Valence improvement (% pts)")
-    axes[1].set_title("B. 2D Pattern Space")
-    axes[1].legend(loc="best", fontsize=8)
-    axes[1].grid(True, alpha=0.3)
+                            s=55, alpha=0.85, color=color, edgecolors="black", linewidth=0.8,
+                            label=f"{pattern.replace('_', ' ')} (n={len(sub)})")
+        axes[1].axhline(0, color="gray", linewidth=1)
+        axes[1].axvline(0, color="gray", linewidth=1)
+        axes[1].set_xlabel("Arousal accuracy delta (pp)")
+        axes[1].set_ylabel("Valence accuracy delta (pp)")
+        axes[1].set_title("B. Per-user delta space")
+        axes[1].legend(loc="best", fontsize=9)
+        axes[1].grid(True, alpha=0.3)
 
-    plt.tight_layout()
-    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_path, dpi=200, bbox_inches="tight", facecolor="white")
-    plt.close()
+        plt.tight_layout()
+        Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+        plt.savefig(output_path)
+        plt.close()
     return fig
 
 
@@ -193,7 +192,7 @@ def plot_survey_correlates(pattern_df, surveys, output_path):
             continue
         uid_int = int(uid)
         pat_row = pattern_df[pattern_df["user_id"].astype(int) == uid_int] if pattern_df is not None else pd.DataFrame()
-        pat = pat_row["pattern"].iloc[0] if len(pat_row) > 0 else "mixed"
+        pat = pat_row["pattern"].iloc[0] if len(pat_row) > 0 else "neither"
 
         bmrq = 0
         for k, v in (s.get("bmrq_responses") or {}).items():
@@ -349,13 +348,12 @@ def plot_statistical_summary(res_df, pattern_df, output_path):
         a_only = (pattern_df["pattern"] == "arousal_only").sum()
         v_only = (pattern_df["pattern"] == "valence_only").sum()
         neither = (pattern_df["pattern"] == "neither").sum()
-        other = len(pattern_df) - both - a_only - v_only - neither
-        grid = np.array([[both, v_only], [a_only, neither + other]])
+        grid = np.array([[both, v_only], [a_only, neither]])
         im = axes[1].imshow(grid, cmap="Blues")
         for i in range(2):
             for j in range(2):
                 val = grid[i, j]
-                lbl = ["Both", "Valence only", "Arousal only", "Neither/Mixed"][i * 2 + j]
+                lbl = ["Both", "Valence only", "Arousal only", "Neither"][i * 2 + j]
                 pct = 100 * val / grid.sum() if grid.sum() > 0 else 0
                 axes[1].text(j, i, f"{lbl}\n{int(val)} ({pct:.0f}%)", ha="center", va="center",
                              fontsize=9, fontweight="bold",
