@@ -12,6 +12,7 @@ from tac_personalization.config import (
     N_FOLDS,
 )
 from tac_personalization.baselines.acoustic import AcousticBaseline
+from tac_personalization.baselines.general_bt import GeneralBTBaseline
 from tac_personalization.data.features import get_feature_matrix
 from tac_personalization.data.loading import (
     get_dimension_comparisons,
@@ -42,12 +43,17 @@ def evaluate_user_cv(
     user_id: int,
     dimension: str,
     baseline: AcousticBaseline | None = None,
+    general_baseline: GeneralBTBaseline | None = None,
     n_folds: int = N_FOLDS,
 ) -> dict | None:
     """Run n-fold stratified CV for one user x dimension.
 
-    Trains model per fold; evaluates both model and baseline on the same
-    test fold (fixes the baseline inconsistency from the original code).
+    Trains model per fold; evaluates model, acoustic baseline, and optionally
+    general BT baseline on the same test fold.
+
+    The general_baseline should already be fit (via fit_pooled) before calling
+    this function — it is not re-fit per fold since it excludes the test user
+    entirely.
 
     Returns dict with mean/std metrics for personalized and baseline, or None
     if insufficient data.
@@ -74,6 +80,7 @@ def evaluate_user_cv(
     auc_pers, auc_bl = [], []
     brier_pers, brier_bl = [], []
     ll_pers, ll_bl = [], []
+    acc_gbl, auc_gbl, brier_gbl, ll_gbl = [], [], [], []
 
     if baseline is None:
         baseline = AcousticBaseline()
@@ -87,7 +94,7 @@ def evaluate_user_cv(
         model.fit(train_df, audio_df)
         p_pers = model.predict_proba(test_df, audio_df)
 
-        # Baseline on same test fold (fixes inconsistency)
+        # Acoustic baseline on same test fold
         p_bl = baseline.predict_proba(test_df, audio_df, dimension)
 
         # Only evaluate where both have valid predictions
@@ -107,10 +114,21 @@ def evaluate_user_cv(
         ll_pers.append(m_pers["ll"])
         ll_bl.append(m_bl["ll"])
 
+        # General BT baseline (already fit on all other users)
+        if general_baseline is not None:
+            p_gbl = general_baseline.predict_proba(test_df, audio_df, dimension)
+            valid_gbl = valid & ~np.isnan(p_gbl)
+            if valid_gbl.sum() > 0:
+                m_gbl = compute_binary_metrics(y_test[valid_gbl], np.clip(p_gbl[valid_gbl], 1e-15, 1 - 1e-15))
+                acc_gbl.append(m_gbl["acc"])
+                auc_gbl.append(m_gbl["auc_roc"])
+                brier_gbl.append(m_gbl["brier"])
+                ll_gbl.append(m_gbl["ll"])
+
     if not acc_pers:
         return None
 
-    return {
+    result = {
         "acc_personalized_mean": _nanmean(acc_pers),
         "acc_personalized_std": _nanstd(acc_pers),
         "acc_baseline_mean": _nanmean(acc_bl),
@@ -131,6 +149,15 @@ def evaluate_user_cv(
         "n_pairs_cv": len(user_comp),
     }
 
+    if acc_gbl:
+        result["acc_general_bt_mean"] = _nanmean(acc_gbl)
+        result["acc_general_bt_std"] = _nanstd(acc_gbl)
+        result["auc_general_bt_mean"] = _nanmean(auc_gbl)
+        result["brier_general_bt_mean"] = _nanmean(brier_gbl)
+        result["ll_general_bt_mean"] = _nanmean(ll_gbl)
+
+    return result
+
 
 def run_experiment(
     model: PairwisePreferenceModel,
@@ -139,10 +166,12 @@ def run_experiment(
     output_path=None,
     dimensions: tuple[str, ...] = DIMENSIONS,
     n_folds: int = N_FOLDS,
+    include_general_bt: bool = True,
 ) -> pd.DataFrame | None:
     """Run full experiment: loop user x dimension, CV, collect results.
 
-    This replaces all 5 run_*() functions from the original codebase.
+    When include_general_bt=True, also evaluates a pooled BT baseline
+    trained on all other users' comparisons (leave-one-user-out).
     """
     df = load_comparisons()
     mapping = load_mapping()
@@ -164,9 +193,17 @@ def run_experiment(
         print(f"--- {dim.upper()} ---")
 
         for uid in real_user_ids:
+            # Fit general BT baseline on all other users (leave-one-user-out)
+            general_baseline = None
+            if include_general_bt:
+                general_baseline = GeneralBTBaseline()
+                general_baseline.fit_pooled(comp_all, audio_df, exclude_user_id=uid)
+
             cv_res = evaluate_user_cv(
                 model, comp_all, audio_df, uid, dim,
-                baseline=baseline, n_folds=n_folds,
+                baseline=baseline,
+                general_baseline=general_baseline,
+                n_folds=n_folds,
             )
             if cv_res is None:
                 continue

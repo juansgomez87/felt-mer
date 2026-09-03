@@ -23,7 +23,7 @@ def build_results_row(user_id: int, dimension: str, cv_res: dict) -> dict:
             return a - b
         return np.nan
 
-    return {
+    row = {
         "user_id": user_id,
         "dimension": dimension,
         "n_pairs_cv": cv_res["n_pairs_cv"],
@@ -54,6 +54,19 @@ def build_results_row(user_id: int, dimension: str, cv_res: dict) -> dict:
         "beat_baseline_brier": brier_pers < brier_bl if np.isfinite(brier_pers) and np.isfinite(brier_bl) else np.nan,
         "beat_baseline_ll": ll_pers > ll_bl if np.isfinite(ll_pers) and np.isfinite(ll_bl) else np.nan,
     }
+
+    # General BT baseline columns (if present)
+    acc_gbl = cv_res.get("acc_general_bt_mean")
+    if acc_gbl is not None:
+        row["acc_general_bt_mean"] = acc_gbl
+        row["acc_general_bt_std"] = cv_res.get("acc_general_bt_std", np.nan)
+        row["auc_general_bt_mean"] = cv_res.get("auc_general_bt_mean", np.nan)
+        row["brier_general_bt_mean"] = cv_res.get("brier_general_bt_mean", np.nan)
+        row["ll_general_bt_mean"] = cv_res.get("ll_general_bt_mean", np.nan)
+        row["acc_improvement_vs_general"] = _safe_diff(acc_pers, acc_gbl)
+        row["beat_general_bt_acc"] = acc_pers > acc_gbl
+
+    return row
 
 
 def print_summary(res_df: pd.DataFrame, baseline_label: str = "Baseline") -> None:
@@ -94,10 +107,34 @@ def print_summary(res_df: pd.DataFrame, baseline_label: str = "Baseline") -> Non
         except Exception:
             pass
 
+    # General BT baseline comparison
+    if "acc_general_bt_mean" in res_df.columns:
+        gbl = res_df["acc_general_bt_mean"].dropna()
+        if len(gbl) > 0:
+            print(f"\n--- vs General (pooled) BT ---")
+            print(f"  Personalized acc: {res_df['acc_personalized_mean'].mean():.4f}")
+            print(f"  General BT acc:   {gbl.mean():.4f}")
+            imp_vs_gbl = res_df["acc_improvement_vs_general"].dropna()
+            print(f"  Improvement:      {imp_vs_gbl.mean():.4f}")
+            beat_gbl = res_df["beat_general_bt_acc"].dropna()
+            print(f"  Beat general BT:  {100 * beat_gbl.mean():.1f}%")
+            try:
+                from scipy import stats
+                if len(imp_vs_gbl) >= 2:
+                    _, p = stats.wilcoxon(imp_vs_gbl.values, alternative="greater")
+                    print(f"  Wilcoxon (pers > general): p={p:.4f}")
+            except Exception:
+                pass
+
     if "dimension" in res_df.columns:
         print("\n--- Per Dimension ---")
         for dim in res_df["dimension"].unique():
             sub = res_df[res_df["dimension"] == dim]
             acc_imp = sub["acc_improvement"].mean()
             beat_pct = 100 * sub["beat_baseline_acc"].mean()
-            print(f"  {dim}: N={len(sub)}, acc improvement={acc_imp:.3f}, beat baseline={beat_pct:.1f}%")
+            line = f"  {dim}: N={len(sub)}, acc improvement={acc_imp:.3f}, beat baseline={beat_pct:.1f}%"
+            if "acc_improvement_vs_general" in sub.columns:
+                gbl_imp = sub["acc_improvement_vs_general"].dropna()
+                if len(gbl_imp) > 0:
+                    line += f", vs general={gbl_imp.mean():+.3f}"
+            print(line)

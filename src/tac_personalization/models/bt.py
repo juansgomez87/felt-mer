@@ -34,6 +34,7 @@ class BradleyTerryModel(PairwisePreferenceModel):
             max_iter=BT_MAX_ITER,
             random_state=CV_SEED,
             l1_ratios=(0.0,),
+            # solver="saga", penalty="elasticnet", l1_ratios=(0.0, 0.5, 1.0),
             use_legacy_attributes=False,
         )
         self._model.fit(X, y)
