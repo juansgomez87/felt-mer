@@ -5,7 +5,9 @@
 Juan Sebastián Gómez-Cañón¹, Perfecto Herrera-Boyer², Dmitry Bogdanov², Beatriz Barroso-Gstrein³, Daniel L. Bowling¹
 
 ¹ Department of Psychiatry and Behavioral Sciences, Stanford University, Stanford, CA, USA
+
 ² Music Technology Group, Universitat Pompeu Fabra, Barcelona, Spain
+
 ³ Universität Innsbruck, Innsbruck, Austria
 
 Submitted to *IEEE Transactions on Affective Computing*.
