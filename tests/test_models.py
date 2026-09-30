@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from felt_mer.baselines.acoustic import AcousticBaseline
+from felt_mer.config import AROUSAL_VALENCE_COLS, AUDIO_FEATURE_COLS
 from felt_mer.data.loading import get_dimension_comparisons
 from felt_mer.models.bt import BradleyTerryModel
 from felt_mer.models.dpo import DPOModel
@@ -27,6 +28,14 @@ class TestBradleyTerryModel:
 
     def test_name(self):
         assert BradleyTerryModel().name == "bt"
+
+    def test_feature_cols_drops_arousal_valence(self, sample_comparisons, sample_audio_df):
+        comp = get_dimension_comparisons(sample_comparisons, "arousal")
+        user_comp = comp[comp["user_id"] == 0]
+        feature_cols = [c for c in AUDIO_FEATURE_COLS if c not in AROUSAL_VALENCE_COLS]
+        model = BradleyTerryModel(feature_cols=feature_cols)
+        model.fit(user_comp, sample_audio_df)
+        assert len(model.coefficients) == len(AUDIO_FEATURE_COLS) - len(AROUSAL_VALENCE_COLS)
 
     def test_empty_data(self, sample_audio_df):
         empty = pd.DataFrame(columns=["user_id", "song_a_id", "song_b_id", "winner"])

@@ -167,11 +167,13 @@ def run_experiment(
     dimensions: tuple[str, ...] = DIMENSIONS,
     n_folds: int = N_FOLDS,
     include_general_bt: bool = True,
+    general_bt_feature_cols: list[str] | None = None,
 ) -> pd.DataFrame | None:
     """Run full experiment: loop user x dimension, CV, collect results.
 
     When include_general_bt=True, also evaluates a pooled BT baseline
     trained on all other users' comparisons (leave-one-user-out).
+    general_bt_feature_cols restricts its features; None uses the defaults.
     """
     df = load_comparisons()
     mapping = load_mapping()
@@ -196,7 +198,7 @@ def run_experiment(
             # Fit general BT baseline on all other users (leave-one-user-out)
             general_baseline = None
             if include_general_bt:
-                general_baseline = GeneralBTBaseline()
+                general_baseline = GeneralBTBaseline(feature_cols=general_bt_feature_cols)
                 general_baseline.fit_pooled(comp_all, audio_df, exclude_user_id=uid)
 
             cv_res = evaluate_user_cv(

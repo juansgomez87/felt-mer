@@ -13,7 +13,8 @@ from felt_mer.models.base import PairwisePreferenceModel
 class BradleyTerryModel(PairwisePreferenceModel):
     """Feature-based Bradley-Terry via logistic regression."""
 
-    def __init__(self):
+    def __init__(self, feature_cols: list[str] | None = None):
+        self._feature_cols = feature_cols
         self._model = None
         self._scaler = None
 
@@ -22,7 +23,7 @@ class BradleyTerryModel(PairwisePreferenceModel):
         return "bt"
 
     def fit(self, train_df: pd.DataFrame, audio_df: pd.DataFrame) -> None:
-        X, y = create_pairwise_features(train_df, audio_df)
+        X, y = create_pairwise_features(train_df, audio_df, self._feature_cols)
         if len(y) == 0:
             self._model = None
             return
@@ -42,7 +43,7 @@ class BradleyTerryModel(PairwisePreferenceModel):
     def predict_proba(self, test_df: pd.DataFrame, audio_df: pd.DataFrame) -> np.ndarray:
         if self._model is None:
             return np.full(len(test_df), np.nan)
-        X, _ = create_pairwise_features(test_df, audio_df)
+        X, _ = create_pairwise_features(test_df, audio_df, self._feature_cols)
         if len(X) == 0:
             return np.full(len(test_df), np.nan)
         X = self._scaler.transform(X)

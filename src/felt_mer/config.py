@@ -37,6 +37,9 @@ AUDIO_FEATURE_COLS = [
     "mode",
 ]
 
+# Spotify's own arousal/valence proxies, dropped in the feature ablation
+AROUSAL_VALENCE_COLS = ("energy", "valence")
+
 ALL_AUDIO_COLS = [
     "danceability",
     "energy",

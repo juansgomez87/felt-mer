@@ -22,7 +22,8 @@ class GeneralBTBaseline:
          since the general model doesn't use the test user's data at all.
     """
 
-    def __init__(self):
+    def __init__(self, feature_cols: list[str] | None = None):
+        self._feature_cols = feature_cols
         self._model = None
         self._scaler = None
 
@@ -38,7 +39,7 @@ class GeneralBTBaseline:
     ) -> None:
         """Train on all comparisons except those from exclude_user_id."""
         other_users = comparisons_df[comparisons_df["user_id"] != exclude_user_id]
-        X, y = create_pairwise_features(other_users, audio_df)
+        X, y = create_pairwise_features(other_users, audio_df, self._feature_cols)
         if len(y) == 0:
             self._model = None
             return
@@ -67,7 +68,7 @@ class GeneralBTBaseline:
         """
         if self._model is None:
             return np.full(len(test_df), np.nan)
-        X, _ = create_pairwise_features(test_df, audio_df)
+        X, _ = create_pairwise_features(test_df, audio_df, self._feature_cols)
         if len(X) == 0:
             return np.full(len(test_df), np.nan)
         X = self._scaler.transform(X)
