@@ -1,6 +1,4 @@
-# felt-mer
-
-**Personalizing Induced Music Emotion Recognition: from relevance feedback to preference learning**
+# Personalizing Induced Music Emotion Recognition: from relevance feedback to preference learning
 
 Juan Sebastián Gómez-Cañón¹, Perfecto Herrera-Boyer², Dmitry Bogdanov², Beatriz Barroso-Gstrein³, Daniel L. Bowling¹
 
