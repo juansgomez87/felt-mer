@@ -15,5 +15,6 @@ data/raw/
 .env
 data/
 results/
+scripts/build_dataset.py
 
 *.DS_Store

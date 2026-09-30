@@ -14,13 +14,11 @@ Submitted to *IEEE Transactions on Affective Computing*.
 
 ## Abstract
 
-Two listeners can agree on the emotion conveyed by a piece of music and yet feel very different in response. This implies that modeling individual differences in induced emotion is essential for emotionally meaningful music recommendations. Yet prior approaches to music emotion recognition (MER) have mainly focused on perceived emotion, averaging judgments across listeners into shared "ground truths." This approach treats disagreement as noise. 
-By contrast, predicting induced (felt) emotion requires treating disagreement as the signal. 
+Two listeners can agree on the emotion conveyed by a piece of music and yet feel very different in response. This implies that modeling individual differences in induced emotion is essential for emotionally meaningful music recommendations. Yet prior approaches to music emotion recognition (MER) have mainly focused on perceived emotion, averaging judgments across listeners into shared "ground truths." This approach treats disagreement as noise. By contrast, predicting induced (felt) emotion requires treating disagreement as the signal.
 
-We present a study of audio-based MER in which the target of prediction is how music makes an individual listener feel, based on induced arousal, valence, and preference ratings from 41 participants who listened online to excerpts from the MusAV dataset in their preferred genres. We examine how these ratings can support personalization in two ways. First, we use relevance feedback on excerpts represented with MAEST embeddings, fitting personalized Gaussian Mixture Models that are blended with a general MER model. The predictions of the blended and general models were evaluated to determine if the personalization layer improved correspondence with self-report using AB testing (e.g., which excerpt makes you feel more energized?). Second, we used the pairwise choices from the AB testing stage as a preference learning problem, training Bradley--Terry (BT) models on Spotify audio features and comparing them against a Spotify baseline and a general BT model trained to predict the ratings of all other participants. 
-Relevance feedback improved how closely each model matched its listener's ratings, yet listener comparisons did not differentiate the performance of the two models. 
+We present a study of audio-based MER in which the target of prediction is how music makes an individual listener feel, based on induced arousal, valence, and preference ratings from 41 participants who listened online to excerpts from the MusAV dataset in their preferred genres. We examine how these ratings can support personalization in two ways. First, we used relevance feedback on excerpts represented with MAEST embeddings, fitting personalized Gaussian Mixture Models that were blended with a general MER model. We evaluated whether the personalization layer improved correspondence with self-report by comparing the predictions of the blended and general models in AB tests (e.g., which excerpt makes you feel more energized?). Second, we treated the pairwise choices from the AB stage as a preference learning problem, training Bradley-Terry (BT) models on Spotify audio features and comparing them against a Spotify baseline and a general BT model trained on the comparisons of all other participants. Relevance feedback improved how closely each model matched its listener's ratings, yet listener comparisons did not differentiate the performance of the two models.
 
-The preference learning approach instead produced personalized models that predicted individual listeners choices more accurately than both baselines in average (60.7% vs. 56.6% for Spotify and 56.1% for general BT; Wilcoxon's p = 0.007 and p = 0.004), with the added advantage of lower cognitive burden through AB comparison. Inspection of individual-level data revealed wide variation in model performance. Where personalization changed accuracy by more than 5 percentage points, listeners gained 14.6 (arousal) and 12.0 (valence) points on average when helped, and lost 12.8 and 8.6 when hurt. Disagreement between listeners is the signal, and pairwise comparisons appear to be an efficient way to capture it. 
+The preference learning approach instead produced personalized models that predicted individual listeners' choices more accurately than both baselines on average (60.7% vs. 56.6% for Spotify and 56.1% for general BT; Wilcoxon's p = 0.007 and p = 0.004), from about 60 comparisons per listener and dimension. Inspection of individual-level data revealed wide variation in model performance. Where personalization changed accuracy by more than 5 percentage points, listeners gained 14.6 (arousal) and 12.0 (valence) points on average when helped, and lost 12.8 and 8.6 when hurt. Disagreement between listeners is the signal, and pairwise comparisons appear to be an efficient way to capture it.
 
 ## Scope of this repository
 
@@ -41,7 +39,9 @@ uv run python scripts/run_all.py
 uv run pytest
 ```
 
-You can contact us [here](mailto:juans.gomez87@gmail.com) to get all the data. 
+## Data
+
+The data are available on request from the [first author](mailto:juans.gomez87@gmail.com). Place the files in `data/raw/`: `bt_comparisons.parquet`, `audio_features.parquet`, and `user_mapping.json`.
 
 ## Running experiments
 
