@@ -28,7 +28,7 @@ This repository contains the **phase-two** experiments: preference learning from
 
 ## Setup
 
-Requires Python 3.11 (pinned in `.python-version`).
+Requires Python 3.11.
 
 ```bash
 uv sync --extra dev --extra plot --extra data
@@ -41,23 +41,7 @@ uv run python scripts/run_all.py
 uv run pytest
 ```
 
-If Python 3.11 is not on the system, `uv` will fetch it:
-
-```bash
-uv python install 3.11
-```
-
-## Data preparation
-
-Build the comparison dataset and audio features from the original user data:
-
-```bash
-uv run python scripts/build_dataset.py \
-  --source-dir /path/to/spotimeta/user_data \
-  --audio-parquet /path/to/track_audio_features.parquet
-```
-
-This writes `data/raw/bt_comparisons.parquet`, `data/raw/audio_features.parquet`, and `data/raw/user_mapping.json`.
+You can contact us [here](mailto:juans.gomez87@gmail.com) to get all the data. 
 
 ## Running experiments
 
@@ -74,6 +58,14 @@ All models (writes `results/all_results.csv`):
 
 ```bash
 uv run python scripts/run_all.py
+```
+
+Feature ablation – drops Spotify `energy` and `valence` from both the personalized
+and the general BT model, leaving the Spotify baseline unchanged (writes
+`results/bt_no_av_results.csv`):
+
+```bash
+uv run python scripts/run_model.py --model bt --drop-av
 ```
 
 ## Generating figures
