@@ -113,7 +113,7 @@ author = {Gómez-Cañón, Juan Sebastián and
           Bogdanov, Dmitry and
           Barroso-Gstrein, Beatriz and
           Bowling, Daniel L.},
-title = {{From Relevance Feedback to Preference Learning: Two Approaches to Personalizing Induced Music Emotion Recognition}},
+title = {{Personalizing Induced Music Emotion Recognition: from relevance feedback to preference learning}},
 journal = {IEEE Transactions on Affective Computing},
 volume = {},
 issue = {},
